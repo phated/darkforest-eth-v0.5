@@ -2,7 +2,7 @@ import type { DarkForest } from '@darkforest_eth/contracts/typechain';
 import type { SignerWithAddress } from '@nomiclabs/hardhat-ethers/dist/src/signer-with-address';
 import { BigNumber, utils } from 'ethers';
 import hre from 'hardhat';
-import type { HardhatRuntimeEnvironment } from 'hardhat/types';
+import type { HardhatSettings } from 'hardhat/types';
 import { deployAndCut } from '../../tasks/deploy';
 import { initializers, noPlanetTransferInitializers, target4Initializers } from './WorldConstants';
 
@@ -25,7 +25,7 @@ export interface Player {
 }
 
 export interface InitializeWorldArgs {
-  initializers: HardhatRuntimeEnvironment['initializers'];
+  initializers: HardhatSettings['darkforest']['initializers'];
   whitelistEnabled: boolean;
 }
 
@@ -73,7 +73,7 @@ export async function initializeWorld({
     hre
   );
 
-  const contract = await hre.ethers.getContractAt('DarkForest', diamond.address);
+  const contract = await hre.ethers.getContractAt('DarkForest', diamond.address) as DarkForest;
 
   await deployer.sendTransaction({
     to: contract.address,

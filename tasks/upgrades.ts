@@ -1,6 +1,6 @@
-import { task } from 'hardhat/config';
-import { HardhatRuntimeEnvironment } from 'hardhat/types';
-import { DiamondChanges } from '../utils/diamond';
+import { task } from "hardhat/config";
+import { HardhatRuntimeEnvironment } from "hardhat/types";
+import { DiamondChanges } from "../utils/diamond";
 import {
   deployAdminFacet,
   deployArtifactFacet,
@@ -12,19 +12,25 @@ import {
   deployLobbyFacet,
   deployMoveFacet,
   deployWhitelistFacet,
-} from './deploy';
+} from "./deploy";
 
-task('upgrade', 'upgrade contracts and replace in the diamond').setAction(upgrade);
+task("upgrade", "upgrade contracts and replace in the diamond").setAction(
+  upgrade
+);
 
 async function upgrade({}, hre: HardhatRuntimeEnvironment) {
-  await hre.run('utils:assertChainId');
+  await hre.run("utils:assertChainId");
 
-  const isDev = hre.network.name === 'localhost' || hre.network.name === 'hardhat';
+  const isDev =
+    hre.network.name === "localhost" || hre.network.name === "hardhat";
 
   // need to force a compile for tasks
-  await hre.run('compile');
+  await hre.run("compile");
 
-  const diamond = await hre.ethers.getContractAt('DarkForest', hre.contracts.CONTRACT_ADDRESS);
+  const diamond = await hre.ethers.getContractAt(
+    "DarkForest",
+    hre.settings.contracts.CONTRACT_ADDRESS
+  );
 
   const previousFacets = await diamond.facets();
 
@@ -48,19 +54,19 @@ async function upgrade({}, hre: HardhatRuntimeEnvironment) {
 
   // The `cuts` to perform for Dark Forest facets
   const darkForestCuts = [
-    ...changes.getFacetCuts('DFCoreFacet', coreFacet),
-    ...changes.getFacetCuts('DFMoveFacet', moveFacet),
-    ...changes.getFacetCuts('DFArtifactFacet', artifactFacet),
-    ...changes.getFacetCuts('DFGetterFacet', getterFacet),
-    ...changes.getFacetCuts('DFWhitelistFacet', whitelistFacet),
-    ...changes.getFacetCuts('DFAdminFacet', adminFacet),
-    ...changes.getFacetCuts('DFLobbyFacet', lobbyFacet),
-    ...changes.getFacetCuts('DFCaptureFacet', captureFacet),
+    ...changes.getFacetCuts("DFCoreFacet", coreFacet),
+    ...changes.getFacetCuts("DFMoveFacet", moveFacet),
+    ...changes.getFacetCuts("DFArtifactFacet", artifactFacet),
+    ...changes.getFacetCuts("DFGetterFacet", getterFacet),
+    ...changes.getFacetCuts("DFWhitelistFacet", whitelistFacet),
+    ...changes.getFacetCuts("DFAdminFacet", adminFacet),
+    ...changes.getFacetCuts("DFLobbyFacet", lobbyFacet),
+    ...changes.getFacetCuts("DFCaptureFacet", captureFacet),
   ];
 
   if (isDev) {
     const debugFacet = await deployDebugFacet({}, libraries, hre);
-    darkForestCuts.push(...changes.getFacetCuts('DFDebugFacet', debugFacet));
+    darkForestCuts.push(...changes.getFacetCuts("DFDebugFacet", debugFacet));
   }
 
   // The `cuts` to remove any old, unused functions
@@ -68,7 +74,7 @@ async function upgrade({}, hre: HardhatRuntimeEnvironment) {
 
   const shouldUpgrade = await changes.verify();
   if (!shouldUpgrade) {
-    console.log('Upgrade aborted');
+    console.log("Upgrade aborted");
     return;
   }
 
@@ -81,24 +87,32 @@ async function upgrade({}, hre: HardhatRuntimeEnvironment) {
   // If the Diamond storage needs to be changed on an upgrade, a contract would need to be
   // deployed and these variables would need to be adjusted similar to the `deploy` task.
   const initAddress = hre.ethers.constants.AddressZero;
-  const initFunctionCall = '0x';
+  const initFunctionCall = "0x";
 
-  const upgradeTx = await diamond.diamondCut(toCut, initAddress, initFunctionCall);
+  const upgradeTx = await diamond.diamondCut(
+    toCut,
+    initAddress,
+    initFunctionCall
+  );
   const upgradeReceipt = await upgradeTx.wait();
   if (!upgradeReceipt.status) {
     throw Error(`Diamond cut failed: ${upgradeTx.hash}`);
   }
-  console.log('Completed diamond cut');
+  console.log("Completed diamond cut");
 
   // TODO: Upstream change to update task name from `hardhat-4byte-uploader`
   if (!isDev) {
     try {
-      await hre.run('upload-selectors', { noCompile: true });
+      await hre.run("upload-selectors", { noCompile: true });
     } catch {
-      console.warn('WARNING: Unable to update 4byte database with our selectors');
-      console.warn('Please run the `upload-selectors` task manually so selectors can be reversed');
+      console.warn(
+        "WARNING: Unable to update 4byte database with our selectors"
+      );
+      console.warn(
+        "Please run the `upload-selectors` task manually so selectors can be reversed"
+      );
     }
   }
 
-  console.log('Upgraded successfully. Godspeed cadet.');
+  console.log("Upgraded successfully. Godspeed cadet.");
 }

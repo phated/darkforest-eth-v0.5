@@ -15,16 +15,16 @@ const defaultInitializerValues = {
 };
 
 // This builds a fake HRE-like object used to initialize the test contracts
-export const initializers = settings.parse(decodeInitializers, defaultInitializerValues);
+export const initializers = decodeInitializers(defaultInitializerValues);
 
 // This builds a fake HRE-like object used to initialize the test contracts
-export const noPlanetTransferInitializers = settings.parse(decodeInitializers, {
+export const noPlanetTransferInitializers = decodeInitializers({
   ...defaultInitializerValues,
   PLANET_TRANSFER_ENABLED: false,
 });
 
 // This builds a fake HRE-like object used to initialize the test contracts
-export const target4Initializers = settings.parse(decodeInitializers, {
+export const target4Initializers = decodeInitializers({
   DISABLE_ZK_CHECKS: true,
   PLANETHASH_KEY: 1,
   SPACETYPE_KEY: 2,

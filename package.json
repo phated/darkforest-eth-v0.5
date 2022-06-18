@@ -14,7 +14,6 @@
     "@darkforest_eth/whitelist": "6.7.29",
     "@graphprotocol/graph-cli": "0.24.1",
     "@graphprotocol/graph-ts": "0.24.1",
-    "@iarna/toml": "^2.2.5",
     "@nomiclabs/hardhat-ethers": "^2.0.2",
     "@nomiclabs/hardhat-waffle": "^2.0.1",
     "@solidstate/contracts": "0.0.29",
@@ -31,7 +30,6 @@
     "chai": "^4.2.0",
     "chalk": "^4.1.0",
     "cli-table": "^0.3.11",
-    "cosmiconfig": "^7.0.0",
     "decoders": "^1.25.5",
     "del-cli": "^4.0.1",
     "dockerode": "^3.2.1",
@@ -44,6 +42,7 @@
     "hardhat-circom": "^1.1.0",
     "hardhat-contract-sizer": "^2.3.0",
     "hardhat-diamond-abi": "^2.0.0",
+    "hardhat-settings": "0.0.0",
     "lodash": "^4.17.15",
     "mocha": "^8.2.1",
     "node-fetch": "^2.6.0",
@@ -82,8 +81,8 @@
     "subgraph:deploy:prod": "cd subgraph && graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/",
     "clean": "del-cli artifacts cache subgraph/build node_modules tsconfig.ref.tsbuildinfo",
     "wait:node": "wait-on tcp:8545",
-    "deploy:contracts": "hardhat --network localhost deploy",
+    "deploy:contracts": "hardhat --network localhost deploy ",
     "hardhat:deploy": "run-s wait:node \"deploy:contracts {@}\" --",
-    "start": "run-p hardhat:node \"hardhat:deploy {@}\" --"
+    "start": "run-p \"hardhat:node {@}\" \"hardhat:deploy {@}\" --"
   }
 }

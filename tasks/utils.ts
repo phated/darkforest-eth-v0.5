@@ -1,10 +1,12 @@
-import { subtask } from 'hardhat/config';
-import { HardhatRuntimeEnvironment } from 'hardhat/types';
+import { subtask } from "hardhat/config";
+import { HardhatRuntimeEnvironment } from "hardhat/types";
 
-subtask('utils:assertChainId', 'Assert proper network is selectaed').setAction(assertChainId);
+subtask("utils:assertChainId", "Assert proper network is selectaed").setAction(
+  assertChainId
+);
 
 async function assertChainId({}, hre: HardhatRuntimeEnvironment) {
-  const { NETWORK_ID } = hre.contracts;
+  const { NETWORK_ID } = hre.settings.contracts;
 
   if (hre.network.config.chainId !== NETWORK_ID) {
     throw new Error(

@@ -1,37 +1,55 @@
 // these tasks are intended to simplify the debugging and development workflow by essentially giving
 // you god-mode status, allowing you to change the state of the world however you want.
 
-import { task, types } from 'hardhat/config';
-import { HardhatRuntimeEnvironment } from 'hardhat/types';
+import { task, types } from "hardhat/config";
+import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 // see DFTypes.sol - ArtifactType
 const artifactOptions = (
-  'Monolith,Colossus,Spaceship,Pyramid,Wormhole,' +
-  'PlanetaryShield,PhotoidCannon,BloomFilter,BlackDomain'
-).split(',');
+  "Monolith,Colossus,Spaceship,Pyramid,Wormhole," +
+  "PlanetaryShield,PhotoidCannon,BloomFilter,BlackDomain"
+).split(",");
 
 // yarn workspace eth hardhat:dev debug:giveArtifact "0x27fd6eec1e1f3ce4a53b40d5813119d868f7b4e3" PhotoidCannon 5
-task('debug:giveArtifact', 'gives the player some amount of a particular type of artifact')
+task(
+  "debug:giveArtifact",
+  "gives the player some amount of a particular type of artifact"
+)
   .addPositionalParam(
-    'playerAddress',
-    'the address of the player to give the artifacts',
+    "playerAddress",
+    "the address of the player to give the artifacts",
     undefined,
     types.string
   )
   .addPositionalParam(
-    'artifactType',
-    'one of: [Monolith, Colossus, Spaceship, Pyramid, Wormhole, ' +
-      'PlanetaryShield, PhotoidCannon, BloomFilter, BlackDomain]',
+    "artifactType",
+    "one of: [Monolith, Colossus, Spaceship, Pyramid, Wormhole, " +
+      "PlanetaryShield, PhotoidCannon, BloomFilter, BlackDomain]",
     undefined,
     types.string
   )
-  .addPositionalParam('amount', 'the amount of this artifact to give', 1, types.int)
-  .addPositionalParam('rarity', 'the rarity of the artifact to give', 1, types.int)
-  .addPositionalParam('biome', 'the biome of the artifact to give', 1, types.int)
   .addPositionalParam(
-    'discoveredOn',
-    'the planet ID (decimal string) this was discovered on',
-    '0',
+    "amount",
+    "the amount of this artifact to give",
+    1,
+    types.int
+  )
+  .addPositionalParam(
+    "rarity",
+    "the rarity of the artifact to give",
+    1,
+    types.int
+  )
+  .addPositionalParam(
+    "biome",
+    "the biome of the artifact to give",
+    1,
+    types.int
+  )
+  .addPositionalParam(
+    "discoveredOn",
+    "the planet ID (decimal string) this was discovered on",
+    "0",
     types.string
   )
   .setAction(giveArtifact);
@@ -55,7 +73,10 @@ async function giveArtifact(
   hre: HardhatRuntimeEnvironment
 ) {
   const chosenArtifactType = artifactOptions.indexOf(artifactType) + 1;
-  const contract = await hre.ethers.getContractAt('DarkForest', hre.contracts.CONTRACT_ADDRESS);
+  const contract = await hre.ethers.getContractAt(
+    "DarkForest",
+    hre.settings.contracts.CONTRACT_ADDRESS
+  );
 
   for (let i = 0; i < amount; i++) {
     // see contracts/types/ActionTypes.sol - CreateArtifactArgs
@@ -67,7 +88,7 @@ async function giveArtifact(
       biome: biome,
       artifactType: chosenArtifactType,
       owner: playerAddress,
-      controller: '0x0000000000000000000000000000000000000000',
+      controller: "0x0000000000000000000000000000000000000000",
     };
 
     await (await contract.createArtifact(createArtifactArgs)).wait();
@@ -76,16 +97,21 @@ async function giveArtifact(
 
 // yarn workspace eth hardhat:dev debug:giveOneOfEachArtifact "0x5bcf0ac4c057dcaf9b23e4dd7cb7b035a71dd0dc" 10
 task(
-  'debug:giveOneOfEachArtifact',
-  'gives the player one of each type of artifact, one of each rarity'
+  "debug:giveOneOfEachArtifact",
+  "gives the player one of each type of artifact, one of each rarity"
 )
   .addPositionalParam(
-    'playerAddress',
-    'the address of the player to give the artifacts',
+    "playerAddress",
+    "the address of the player to give the artifacts",
     undefined,
     types.string
   )
-  .addPositionalParam('biome', 'the biome of the artifacts to give', 1, types.int)
+  .addPositionalParam(
+    "biome",
+    "the biome of the artifacts to give",
+    1,
+    types.int
+  )
   .setAction(giveOneOfEachArtifact);
 
 async function giveOneOfEachArtifact(
@@ -101,7 +127,7 @@ async function giveOneOfEachArtifact(
           amount: 1,
           rarity: i,
           biome,
-          discoveredOn: '0',
+          discoveredOn: "0",
         },
         hre
       );
@@ -110,8 +136,8 @@ async function giveOneOfEachArtifact(
 }
 
 function random256Id() {
-  const alphabet = '0123456789ABCDEF'.split('');
-  let result = '0x';
+  const alphabet = "0123456789ABCDEF".split("");
+  let result = "0x";
   for (let i = 0; i < 256 / 4; i++) {
     result += alphabet[Math.floor(Math.random() * alphabet.length)];
   }
